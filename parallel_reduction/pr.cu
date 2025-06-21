@@ -9,17 +9,26 @@ __global__ void parallelSum(int *nums, int N) {
 
     // printf("Thread id: %d\n", i);
 
-    float indexJump = N / 2;
+    // if (i == 0) {
+    //     for (int j = 0; j < N; j++) {
+    //         printf("%d ", nums[j]);
+    //     }
+    //     printf("\n");
+    //     printf("N: %d\n", N);
+    // }
+
+    float indexJump = (float) N / (float) 2;
     int roundedJump = ceilf(indexJump);
 
-
-    if (2 * i <= N) {
+    // if (i + roundedJump < N) {
         nums[i] += nums[i+roundedJump];
         // printf("i: %d; 2i: %d\n", nums[i], nums[2*i]);
-    }
+    // }
 
-    float nextSize = N / 2;
+    float nextSize = (float) N / (float) 2;
+    // printf("%f\n", 5 / 2);
     int nextN = ceilf(nextSize);
+    int nextNThreads = ceilf(nextN / 2);
     if (nextN > 1 && i == 0) {
         // printf("Nextn: %d\n", nextN);
         parallelSum<<<1, nextN>>>(nums, nextN); // this runs in each thread: that is bad
@@ -37,7 +46,7 @@ void serialSum(int nums[], int numsSize, int *serialOut) {
 }
 
 int main() {
-    int nums[20];
+    int nums[1024];
     int numsSize = sizeof(nums) / sizeof(int);
 
     for (int i = 0; i < numsSize; i++) {
@@ -74,4 +83,6 @@ int main() {
     parallelSumResult = nums[0];
 
     cout << "Parallel: " << parallelSumResult << " Runtime: " << parallelTime.count() << "ms" << endl;
+
+    cudaFree(&pn);
 }
