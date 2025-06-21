@@ -1,5 +1,6 @@
 #include <iostream>
 #include <math.h>
+#include <chrono>
 
 using namespace std;
 
@@ -46,9 +47,13 @@ int main() {
 
     int serialSumResult = 0;
 
+    auto startSerial = chrono::high_resolution_clock::now();
     serialSum(nums, numsSize, &serialSumResult);
+    auto endSerial = chrono::high_resolution_clock::now();
 
-    cout << "Serial: " << serialSumResult << endl;
+    auto serialTime = chrono::duration_cast<chrono::milliseconds>(endSerial-startSerial);
+
+    cout << "Serial: " << serialSumResult << " Runtime: " << serialTime.count() << "ms" << endl;
 
     int parallelSumResult = 0;
 
@@ -59,10 +64,14 @@ int main() {
 
     int numThreads = ceil(numsSize / 2);
 
+    auto startParallel = chrono::high_resolution_clock::now();
     parallelSum<<<1, numThreads>>>(pn, numsSize);
+    auto endParallel = chrono::high_resolution_clock::now();
+
+    auto parallelTime = chrono::duration_cast<chrono::milliseconds>(endParallel - startParallel);
 
     cudaMemcpy(nums, pn, sizeof(nums), cudaMemcpyDeviceToHost);
     parallelSumResult = nums[0];
 
-    cout << "Parallel: " << parallelSumResult << endl;
+    cout << "Parallel: " << parallelSumResult << " Runtime: " << parallelTime.count() << "ms" << endl;
 }
