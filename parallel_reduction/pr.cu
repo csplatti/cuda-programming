@@ -48,7 +48,10 @@ void serialSum(int nums[], int numsSize, long *serialOut) {
 }
 
 int main() {
-    int nums[65535];
+    int N; 
+    cout << "Enter the number you would like to sum to (0 < N < 65535): ";
+    cin >> N;
+    int nums[N];
     int numsSize = sizeof(nums) / sizeof(int);
 
     for (int i = 0; i < numsSize; i++) {
@@ -75,7 +78,7 @@ int main() {
 
     int numThreads = ceil(numsSize / 2);
 
-    printf("%d\n", (int) ceil((float) numsSize / 1024));
+    // printf("%d\n", (int) ceil((float) numsSize / 1024));
 
     auto startParallel = chrono::high_resolution_clock::now();
     parallelSum<<<(int) ceil((float) numsSize / 1024), 1024>>>(pn, numsSize);
