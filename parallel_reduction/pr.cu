@@ -49,7 +49,7 @@ void serialSum(int nums[], int numsSize, long *serialOut) {
 
 int main() {
     int N; 
-    cout << "Enter the number you would like to sum to (0 < N < 65535): ";
+    // cout << "Enter the number you would like to sum to (0 < N < 65535): ";
     cin >> N;
     int nums[N];
     int numsSize = sizeof(nums) / sizeof(int);
@@ -67,7 +67,9 @@ int main() {
 
     auto serialTime = chrono::duration_cast<chrono::milliseconds>(endSerial-startSerial);
 
-    cout << "Serial: " << serialSumResult << " Runtime: " << serialTime.count() << "ms" << endl;
+    // cout << "Serial: " << serialSumResult << " Runtime: " << serialTime.count() << "ms" << endl;
+
+    cout << serialTime.count() << endl;
 
     int parallelSumResult = 0;
 
@@ -89,7 +91,9 @@ int main() {
     cudaMemcpy(nums, pn, sizeof(nums), cudaMemcpyDeviceToHost);
     parallelSumResult = nums[0];
 
-    cout << "Parallel: " << parallelSumResult << " Runtime: " << parallelTime.count() << "ms" << endl;
+    // cout << "Parallel: " << parallelSumResult << " Runtime: " << parallelTime.count() << "ms" << endl;
+
+    cout << parallelTime.count() << endl;
 
     cudaFree(&pn);
 }

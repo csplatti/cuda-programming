@@ -94,4 +94,8 @@ Serial: 2147516416 Runtime: 0ms
 Parallel: -2147450880 Runtime: 16ms
 ```
 
-Next I will write a python script to graph the performance of the algorithms!
+I wrote a python script to plot the performance of the serial and parallel algorithms at this point, and unfortunately it is quite dissapointing.
+
+![alt text](runtime_plot_after_block_implementation.png)
+
+This means that either 65,535 elements is too small a list for the benefits of a GPU to take place (unlikely), or my algorithm is the problem (very likely).
