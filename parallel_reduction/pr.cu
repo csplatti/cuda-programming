@@ -5,7 +5,9 @@
 using namespace std;
 
 __global__ void parallelSum(int *nums, int N) {
-    int i = threadIdx.x;
+    int i = threadIdx.x + blockIdx.x * blockDim.x;
+
+    // printf("%d\n", i);
 
     // printf("Thread id: %d\n", i);
 
@@ -17,13 +19,13 @@ __global__ void parallelSum(int *nums, int N) {
     //     printf("N: %d\n", N);
     // }
 
-    float indexJump = (float) N / (float) 2;
+    float indexJump = (float) N / 2;
     int roundedJump = ceilf(indexJump);
 
-    // if (i + roundedJump < N) {
+    if (i + roundedJump < N) {
         nums[i] += nums[i+roundedJump];
         // printf("i: %d; 2i: %d\n", nums[i], nums[2*i]);
-    // }
+    }
 
     float nextSize = (float) N / (float) 2;
     // printf("%f\n", 5 / 2);
@@ -31,13 +33,13 @@ __global__ void parallelSum(int *nums, int N) {
     int nextNThreads = ceilf(nextN / 2);
     if (nextN > 1 && i == 0) {
         // printf("Nextn: %d\n", nextN);
-        parallelSum<<<1, nextN>>>(nums, nextN); // this runs in each thread: that is bad
+        parallelSum<<<ceil((float) nextN / 1024), 1024>>>(nums, nextN); // this runs in each thread: that is bad
     }
 }
 
 // REQUIRES: N == length of nums
-void serialSum(int nums[], int numsSize, int *serialOut) {
-    int sum = 0;
+void serialSum(int nums[], int numsSize, long *serialOut) {
+    long sum = 0;
     for (int i = 0; i < numsSize; i++) {
         sum += nums[i];
     }
@@ -46,7 +48,7 @@ void serialSum(int nums[], int numsSize, int *serialOut) {
 }
 
 int main() {
-    int nums[1024];
+    int nums[65535];
     int numsSize = sizeof(nums) / sizeof(int);
 
     for (int i = 0; i < numsSize; i++) {
@@ -54,7 +56,7 @@ int main() {
         // cout << nums[i] << endl;
     }
 
-    int serialSumResult = 0;
+    long serialSumResult = 0;
 
     auto startSerial = chrono::high_resolution_clock::now();
     serialSum(nums, numsSize, &serialSumResult);
@@ -73,8 +75,10 @@ int main() {
 
     int numThreads = ceil(numsSize / 2);
 
+    printf("%d\n", (int) ceil((float) numsSize / 1024));
+
     auto startParallel = chrono::high_resolution_clock::now();
-    parallelSum<<<1, numThreads>>>(pn, numsSize);
+    parallelSum<<<(int) ceil((float) numsSize / 1024), 1024>>>(pn, numsSize);
     auto endParallel = chrono::high_resolution_clock::now();
 
     auto parallelTime = chrono::duration_cast<chrono::milliseconds>(endParallel - startParallel);
