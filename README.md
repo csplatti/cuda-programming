@@ -7,37 +7,9 @@ This repository contains various algorithms implemented using CUDA for parallel 
 ## Table of Contents
 1. [Vector Addition](#vector-addition)
 
-# Debriefs
-test  
-test  
-test  
-test  
-test  
-test  
-test  
-test  
-test  
-test  
-test  
-test  
-test  
-test  
-test  
-test  
-test  
-test  
-test  
-test  
-test  
-test  
-test  
-test  
-test  
-test  
-test  
+## Vector Addition
+### Code
 
-  
-
-### Vector Addition
+### Performance
 <img width="640" height="480" alt="image" src="https://github.com/user-attachments/assets/0cfe47d3-f71a-4ac1-8c90-1008e61776d4" />
-
+My parallel 
