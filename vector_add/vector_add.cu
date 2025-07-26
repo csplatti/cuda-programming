@@ -19,7 +19,7 @@ void addVectorsSerial(int *a, int *b, int *c, int vectorLength) {
 int main() {
     // Get Vector Size Input
     int N;
-    cout << "Please Enter Desired Vector Size: " << endl; 
+    // cout << "Please Enter Desired Vector Size: " << endl; 
     cin >> N;
 
     // Vector Setup
@@ -42,8 +42,8 @@ int main() {
     // calculate and Display Serial Sum Runtime
     auto serialTime = chrono::duration_cast<chrono::microseconds>(endSerial - startSerial).count();
 
-    cout << "Serial Runtime: " << serialTime << " microseconds" << endl;
-    // cout << serialTime << endl;
+    // cout << "Serial Runtime: " << serialTime << " microseconds" << endl;
+    cout << serialTime << endl;
 
     // GPU Memory Management Setup
     int *pa = 0;
@@ -67,8 +67,8 @@ int main() {
     // Calculate and Display Parallel Sum Runtime
     auto parallelTime = chrono::duration_cast<chrono::microseconds>(endParallel - startParallel).count();
 
-    cout << "Parallel Runtime: " << parallelTime << " microseconds" << endl;
-    // cout << parallelTime << endl;
+    // cout << "Parallel Runtime: " << parallelTime << " microseconds" << endl;
+    cout << parallelTime << endl;
 
     // Copy Parallel Sum Result Back from GPU
     cudaMemcpy(parallelOut, pOut, sizeof(parallelOut), cudaMemcpyDeviceToHost);
