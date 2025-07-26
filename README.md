@@ -11,6 +11,7 @@ I am by no means an expert in CUDA (or C++), and do not claim that my solutions 
 
 ## Vector Addition
 <img width="640" height="480" alt="image" src="https://github.com/user-attachments/assets/0cfe47d3-f71a-4ac1-8c90-1008e61776d4" />
+  
 ### Code
 The serial algorithm I wrote to compare to a parallel implementation used a simple for loop.
 
