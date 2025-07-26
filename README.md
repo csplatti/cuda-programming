@@ -10,6 +10,7 @@ I am by no means an expert in CUDA (or C++), and do not claim that my solutions 
 1. [Vector Addition](#vector-addition)
 
 ## Vector Addition
+<img width="640" height="480" alt="image" src="https://github.com/user-attachments/assets/0cfe47d3-f71a-4ac1-8c90-1008e61776d4" />
 ### Code
 The serial algorithm I wrote to compare to a parallel implementation used a simple for loop.
 
@@ -39,6 +40,3 @@ addVectorsParallel<<<sizeof(parallelOut) / 1024 + 1, 1024>>>(pa, pb, pOut, N);
 ```
 
 One block for each multiple of 1024, plus 1 for any remainder, was called with 1024 threads.
-
-### Performance
-<img width="640" height="480" alt="image" src="https://github.com/user-attachments/assets/0cfe47d3-f71a-4ac1-8c90-1008e61776d4" />
