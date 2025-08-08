@@ -175,7 +175,7 @@ Serial: 2147516416 Runtime: 0ms
 Parallel: -2147450880 Runtime: 16ms
 ```
 
-I wrote a python script to plot the performance of the serial and parallel algorithms at this point, and unfortunately it is quite dissapointing.
+I wrote a python script to plot the performance of the serial and parallel algorithms at this point, and unfortunately it is quite disapointing.
 
 ![alt text](./parallel_reduction/runtime_plot_after_block_implementation.png)
 
