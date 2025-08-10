@@ -109,7 +109,7 @@ My first attempt at parallelization computed the sum correctly, but took orders 
 
 ### Second Attempt Using CUDA Libraries
 
-![alt text](<Runtime Plots/pr_thrust_runtime_plot.png>)
+![alt text](<Runtime Plots/Parallel Reduction/pr_thrust_runtime_plot_max_100.png>)
 
 Having struggled with writing the parallel reduction from scratch, I decided to take a step back and learn some more CUDA. I began with NVIDIA's [CUDA Made Easy](https://github.com/NVIDIA/accelerated-computing-hub/tree/main/gpu-cpp-tutorial) course from the [NVIDIA Accelerated Computing Hub](https://github.com/NVIDIA/accelerated-computing-hub/tree/main), which began by teaching CUDA's Thrust library. The Thrust library provides a variety of standard pre-written functions (reduce, transform, etc.) which can be used and combined to implement various algorithms in parallel without having to write them in raw CUDA completely from scratch.
 
