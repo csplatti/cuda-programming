@@ -98,7 +98,22 @@ My first attempt at parallelization computed the sum correctly, but took orders 
 
 ### Second Attempt Using CUDA Libraries
 
-TODO:
+![alt text](<Runtime Plots/pr_thrust_runtime_plot.png>)
+
+Having struggled with writing the parallel reduction from scratch, I decided to take a step back and learn some more CUDA. I began with NVIDIA's [CUDA Made Easy](https://github.com/NVIDIA/accelerated-computing-hub/tree/main/gpu-cpp-tutorial) course from the [NVIDIA Accelerated Computing Hub](https://github.com/NVIDIA/accelerated-computing-hub/tree/main), which began by teaching CUDA's Thrust library. The Thrust library provides a variety of standard pre-written functions (reduce, transform, etc.) which can be used and combined to implement various algorithms in parallel without having to write them in raw CUDA completely from scratch.
+
+#### Code
+```c++
+long serialSum(const thrust::universal_vector<int>& nums) {
+    return thrust::reduce(thrust::host, nums.begin(), nums.end(), 0, thrust::plus<int>{});
+}
+
+long parallelSum(const thrust::universal_vector<int>& nums) {
+    return thrust::reduce(thrust::device, nums.begin(), nums.end(), 0, thrust::plus<int>{});
+}
+```
+
+Using thrust for parallel reduction was straightforward due do the existence of ```thrust::reduce```. The only difference between serialSum and parallelSum is in the first argument; ```thrust::host``` is used when the function is to be run on the CPU, and ```thrust::device``` is used when the function is to be run on the GPU.
 
 ### Final Implementation (with help)
 
