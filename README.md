@@ -126,8 +126,8 @@ long parallelSum(const thrust::universal_vector<int>& nums) {
 
 Using thrust for parallel reduction was straightforward due do the existence of ```thrust::reduce```. The only difference between serialSum and parallelSum is in the first argument; ```thrust::host``` is used when the function is to be run on the CPU, and ```thrust::device``` is used when the function is to be run on the GPU.
 
-### Final Implementation (with help)
+<!-- ### Final Implementation (with help)
 
-TODO:
+TODO: -->
 
 
