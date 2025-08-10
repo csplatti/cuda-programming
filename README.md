@@ -126,6 +126,10 @@ long parallelSum(const thrust::universal_vector<int>& nums) {
 
 Using thrust for parallel reduction was straightforward due do the existence of ```thrust::reduce```. The only difference between serialSum and parallelSum is in the first argument; ```thrust::host``` is used when the function is to be run on the CPU, and ```thrust::device``` is used when the function is to be run on the GPU.
 
+#### Next Steps
+
+The next step in this project is to implement a parallel reduction in custom CUDA, avoiding recursion like in my first attempt. This will not only help optimize the algorithm but also deepen my understanding of parallel reduction and memory management in CUDA.
+
 <!-- ### Final Implementation (with help)
 
 TODO: -->
