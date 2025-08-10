@@ -42,6 +42,17 @@ Input can also be given via user input by running
 ```
 The program will wait for you to input a number on the newline.
 
+### Running ```dataPlot.ipynb```
+1. Open Terminal
+2. Navigate to the directory where you cloned this repository
+3. Create your own python virtual environment in the root directory
+```python -m venv desired_env_name```
+4. Activate the environment by running 
+```source ./desired_env_name/bin/activate```
+5. Install python dependencies by running
+```pip install -r requirements.txt```
+6. Once you are finished, deactivate the python virtual environment via the ```deactivate``` command
+
 ## Table of Contents
 1. [Vector Addition](#vector-addition)
 2. [Parallel Reduction](#parallel-reduction)
