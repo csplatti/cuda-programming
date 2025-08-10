@@ -6,3 +6,9 @@ To install the necessary dependencies to run pr_thrust.cu, run the following ter
 ```bash
 bash install_deps.bash
 ```
+
+## Compiling with Thrust
+The following command may be needed to compile a CUDA program which uses the thrust library
+```bash
+nvcc --extended-lambda -o pr_thrust pr_thrust.cu
+```

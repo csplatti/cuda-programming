@@ -25,12 +25,14 @@ int main() {
     cout << serialSum(nums) << endl;
     auto end_serial = chrono::high_resolution_clock::now();
     const double serial_duration = chrono::duration_cast<chrono::microseconds>(end_serial - start_serial).count();
-    cout << "SERIAL RUNTIME: " << serial_duration << endl;
+    // cout << "SERIAL RUNTIME: " << serial_duration << endl;
+    cout << serial_duration << endl;
 
     // PARALLEL
     auto start_parallel = chrono::high_resolution_clock::now();
     cout << parallelSum(nums) << endl;
     auto end_parallel = chrono::high_resolution_clock::now();
     const double parallel_duration = chrono::duration_cast<chrono::microseconds>(end_parallel - start_parallel).count();
-    cout << "PARALLEL RUNTIME: " << parallel_duration << endl;
+    // cout << "PARALLEL RUNTIME: " << parallel_duration << endl;
+    cout << parallel_duration << endl;
 }
