@@ -4,7 +4,7 @@
 
 This repository contains various algorithms implemented using CUDA for parallel processing. My goal is to explore and experiment with parallelization techniques in CUDA across different types of algorithms. Each algorithm will be added as an independent module, and the repository will be updated with new implementations over time.  
 
-I am by no means an expert in CUDA (or C++), and do not claim that my solutions are optimal, efficient, or memory safe. If you see any room for improvement feel free to message me or make a pull request implementing the fix with a detailed explanation. Upon receiving either I will fix the issue and give you credit in a comment!
+I am by no means an expert in CUDA (or C++), and do not claim that my solutions are optimal or well written. If you see any room for improvement feel free to message me or make a pull request implementing the fix with a detailed explanation. Upon receiving either I will fix the issue and give you credit in a comment!
 
 ## Prerequisites
 - **Hardware & Software Requirements**
