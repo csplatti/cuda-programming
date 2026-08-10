@@ -1,5 +1,7 @@
 # cuda-programming
 
+## LEGACY
+The Legacy folder contains the previous version of the repository. I have decided to build the project out into a python library so that the work I do with CUDA can be used, potentially in other projects that I create.
 ## Overview
 
 This repository contains various algorithms implemented using CUDA for parallel processing. My goal is to explore and experiment with parallelization techniques in CUDA across different types of algorithms. Each algorithm will be added as an independent module, and the repository will be updated with new implementations over time.  
