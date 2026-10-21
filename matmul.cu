@@ -35,8 +35,6 @@ __global__ void MatmulKernel_d(float* Md, float* Nd, float* Pd, size_t width) {
   int i = thread / width; // rounds down
   int j = thread - i * width;
 
-  // printf("i: %d, j: %d, thread: %d\n", i, j, Pd[thread]);
-
   int sum = 0;
   for (size_t t = 0; t < width; t++) {
     sum += Md[t*width + j] * Nd[i*width + t]; 
@@ -59,11 +57,31 @@ void MatmulKernel(float* M, float* N, float* P, int Width) {
   cudaMemcpy(Nd, N, size, cudaMemcpyHostToDevice);
 
   // Kernel invocation code - to have the device to perform
-  // the actual matmul
+
+  // first start matmul
   MatmulKernel_d<<<1, Width * Width>>>(Md, Nd, Pd, Width);
 
-  cudaError_t error = cudaGetLastError();
-  cout << cudaGetErrorString(error) << endl;
+  // timing the actual matmul
+  cudaEvent_t start, stop;
+  cudaEventCreate(&start);
+  cudaEventCreate(&stop);
+
+  cudaEventRecord(start);
+
+  MatmulKernel_d<<<1, Width * Width>>>(Md, Nd, Pd, Width);
+ 
+  cudaEventRecord(stop);
+  cudaEventSynchronize(stop);
+  
+  float ms = 0.0f;
+  cudaEventElapsedTime(&ms, start, stop);
+
+  std::cout << "Kernel Runtime: " << ms << "ms" << endl;
+
+  string error = cudaGetErrorString(cudaGetLastError());
+  if (error != "no error") {
+    cout << error << endl;
+  }
 
   // copy P from the device memory
   cudaMemcpy(P, Pd, size, cudaMemcpyDeviceToHost);
@@ -75,6 +93,7 @@ void MatmulKernel(float* M, float* N, float* P, int Width) {
 }
 
 void serialMatmul(float* M, float* N, float* P, size_t n) {
+  auto start = chrono::steady_clock::now();
   for (size_t i = 0; i < n; i++) {
     for (size_t j = 0; j < n; j++) {
       int sum = 0;
@@ -84,7 +103,9 @@ void serialMatmul(float* M, float* N, float* P, size_t n) {
       P[i*n + j] = sum;
     }
   }
-
+  auto end = chrono::steady_clock::now();
+  chrono::duration<double, std::milli> elapsed = end - start;
+  cout << "serialMatmul Runtime: " << elapsed.count() << "ms" << endl;
 }
 
 // ---- Host --------------------------------------------------------------
