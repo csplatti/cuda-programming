@@ -1,5 +1,6 @@
 #include <iostream>
 #include <chrono>
+#include <vector>
 
 using namespace std;
 
@@ -87,9 +88,9 @@ void MatmulKernel(float* M, float* N, float* P, int Width) {
   cudaMemcpy(P, Pd, size, cudaMemcpyDeviceToHost);
 
   // Free device memories
-  cudaFree((void**)&Md);
-  cudaFree((void**)&Nd);
-  cudaFree((void**)&Pd);
+  cudaFree(Md);
+  cudaFree(Nd);
+  cudaFree(Pd);
 }
 
 void serialMatmul(float* M, float* N, float* P, size_t n) {
@@ -110,76 +111,80 @@ void serialMatmul(float* M, float* N, float* P, size_t n) {
 
 // ---- Host --------------------------------------------------------------
 int main() {
-  const int N = 4;
-  const int elements = N * N;
+  std::vector<int> sizes = {4, 8, 16, 32};
 
-  // Host-side input matrices for testing serial() and kernel().
-  float *a = new float[elements];
-  float *b = new float[elements];
+  for (int N : sizes) {
+    printf("N=%d\n", N);
+    const int elements = N * N;
 
-  for (int i = 0; i < elements; i++) {
-    a[i] = static_cast<float>((i % 5) - 2); // TODO: Understand These
-    b[i] = static_cast<float>((i % 3) + 1); // TODO: Understand These
-  }
+    // Host-side input matrices for testing serial() and kernel().
+    float *a = new float[elements];
+    float *b = new float[elements];
 
-  cout << "Matrix A:" << endl;
-  for (int row = 0; row < N; row++) {
-    for (int col = 0; col < N; col++) {
-      cout << a[row * N + col] << ' ';
+    for (int i = 0; i < elements; i++) {
+      a[i] = static_cast<float>((i % 5) - 2); // TODO: Understand These
+      b[i] = static_cast<float>((i % 3) + 1); // TODO: Understand These
     }
-    cout << endl;
+
+    // cout << "Matrix A:" << endl;
+    // for (int row = 0; row < N; row++) {
+    //   for (int col = 0; col < N; col++) {
+    //     cout << a[row * N + col] << ' ';
+    //   }
+    //   cout << endl;
+    // }
+    //
+    // cout << "Matrix B:" << endl;
+    // for (int row = 0; row < N; row++) {
+    //   for (int col = 0; col < N; col++) {
+    //     cout << b[row * N + col] << ' ';
+    //   }
+    //   cout << endl;
+    // }
+
+    // SERIAL RESULT
+    float* serial_result = new float[elements];
+    serialMatmul(a, b, serial_result, N);
+    // cout << "Serial Output:" << endl;
+    // for (int row = 0; row < N; row++) {
+    //   for (int col = 0; col < N; col++) {
+    //     cout << serial_result[row * N + col] << ' ';
+    //   }
+    //   cout << endl;
+    // }
+
+    // // PRINT A
+    // cout << "Matrix A:" << endl;
+    // for (int row = 0; row < N; row++) {
+    //   for (int col = 0; col < N; col++) {
+    //     cout << a[row * N + col] << ' ';
+    //   }
+    //   cout << endl;
+    // }
+    //
+    // // PRINT B
+    // cout << "Matrix B:" << endl;
+    // for (int row = 0; row < N; row++) {
+    //   for (int col = 0; col < N; col++) {
+    //     cout << b[row * N + col] << ' ';
+    //   }
+    //   cout << endl;
+    // }
+
+    float* kernel_result = new float[elements];
+    MatmulKernel(a, b, kernel_result, N);
+    // cout << "Kernel Output:" << endl;
+    // for (int row = 0; row < N; row++) {
+    //   for (int col = 0; col < N; col++) {
+    //     cout << kernel_result[row * N + col] << ' ';
+    //   }
+    //   cout << endl;
+    // }
+    
+    cout << "result: " << verify(serial_result, kernel_result, N) << endl; 
+
+    delete[] a;
+    delete[] b;
   }
-
-  cout << "Matrix B:" << endl;
-  for (int row = 0; row < N; row++) {
-    for (int col = 0; col < N; col++) {
-      cout << b[row * N + col] << ' ';
-    }
-    cout << endl;
-  }
-
-  // SERIAL RESULT
-  float* serial_result = new float[elements];
-  serialMatmul(a, b, serial_result, N);
-  cout << "Serial Output:" << endl;
-  for (int row = 0; row < N; row++) {
-    for (int col = 0; col < N; col++) {
-      cout << serial_result[row * N + col] << ' ';
-    }
-    cout << endl;
-  }
-
-  // // PRINT A
-  // cout << "Matrix A:" << endl;
-  // for (int row = 0; row < N; row++) {
-  //   for (int col = 0; col < N; col++) {
-  //     cout << a[row * N + col] << ' ';
-  //   }
-  //   cout << endl;
-  // }
-  //
-  // // PRINT B
-  // cout << "Matrix B:" << endl;
-  // for (int row = 0; row < N; row++) {
-  //   for (int col = 0; col < N; col++) {
-  //     cout << b[row * N + col] << ' ';
-  //   }
-  //   cout << endl;
-  // }
-
-  float* kernel_result = new float[elements];
-  MatmulKernel(a, b, kernel_result, N);
-  cout << "Kernel Output:" << endl;
-  for (int row = 0; row < N; row++) {
-    for (int col = 0; col < N; col++) {
-      cout << kernel_result[row * N + col] << ' ';
-    }
-    cout << endl;
-  }
-  
-  cout << "result: " << verify(serial_result, kernel_result, N) << endl; 
-
-  delete[] a;
-  delete[] b;
   return 0;
 }
