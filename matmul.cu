@@ -2,6 +2,8 @@
 #include <chrono>
 #include <vector>
 
+#include "./benchmark_harness/Launchers.cuh"
+
 using namespace std;
 
 // ---- Config ------------------------------------------------------------
@@ -112,9 +114,38 @@ void serialMatmul(float* M, float* N, float* P, size_t n) {
 // ---- Host --------------------------------------------------------------
 int main() {
   std::vector<int> sizes = {4, 8, 16, 32};
+  profile(serialMatmul, MatmulKernel, sizes);
+  // for (int N : sizes) {
+  //   printf("N=%d\n", N);
+  //   const int elements = N * N;
+  //
+  //   // Host-side input matrices for testing serial() and kernel().
+  //   float *a = new float[elements];
+  //   float *b = new float[elements];
+  //
+  //   for (int i = 0; i < elements; i++) {
+  //     a[i] = static_cast<float>((i % 5) - 2); // TODO: Understand These
+  //     b[i] = static_cast<float>((i % 3) + 1); // TODO: Understand These
+  //   }
+  //
+  //   // SERIAL RESULT
+  //   float* serial_result = new float[elements];
+  //   serialMatmul(a, b, serial_result, N);
+  //
+  //   // KERNEL RESULT
+  //   float* kernel_result = new float[elements];
+  //   MatmulKernel(a, b, kernel_result, N);
+  //
+  //   cout << "result: " << verify(serial_result, kernel_result, N) << endl; 
+  //
+  //   delete[] a;
+  //   delete[] b;
+  // }
+  return 0;
+}
 
+void profile(Launcher serial, Launcher kernel, vector<int> sizes) {
   for (int N : sizes) {
-    printf("N=%d\n", N);
     const int elements = N * N;
 
     // Host-side input matrices for testing serial() and kernel().
@@ -126,65 +157,17 @@ int main() {
       b[i] = static_cast<float>((i % 3) + 1); // TODO: Understand These
     }
 
-    // cout << "Matrix A:" << endl;
-    // for (int row = 0; row < N; row++) {
-    //   for (int col = 0; col < N; col++) {
-    //     cout << a[row * N + col] << ' ';
-    //   }
-    //   cout << endl;
-    // }
-    //
-    // cout << "Matrix B:" << endl;
-    // for (int row = 0; row < N; row++) {
-    //   for (int col = 0; col < N; col++) {
-    //     cout << b[row * N + col] << ' ';
-    //   }
-    //   cout << endl;
-    // }
-
     // SERIAL RESULT
     float* serial_result = new float[elements];
-    serialMatmul(a, b, serial_result, N);
-    // cout << "Serial Output:" << endl;
-    // for (int row = 0; row < N; row++) {
-    //   for (int col = 0; col < N; col++) {
-    //     cout << serial_result[row * N + col] << ' ';
-    //   }
-    //   cout << endl;
-    // }
+    serial(a, b, serial_result, N);
 
-    // // PRINT A
-    // cout << "Matrix A:" << endl;
-    // for (int row = 0; row < N; row++) {
-    //   for (int col = 0; col < N; col++) {
-    //     cout << a[row * N + col] << ' ';
-    //   }
-    //   cout << endl;
-    // }
-    //
-    // // PRINT B
-    // cout << "Matrix B:" << endl;
-    // for (int row = 0; row < N; row++) {
-    //   for (int col = 0; col < N; col++) {
-    //     cout << b[row * N + col] << ' ';
-    //   }
-    //   cout << endl;
-    // }
-
+    // KERNEL RESULT
     float* kernel_result = new float[elements];
-    MatmulKernel(a, b, kernel_result, N);
-    // cout << "Kernel Output:" << endl;
-    // for (int row = 0; row < N; row++) {
-    //   for (int col = 0; col < N; col++) {
-    //     cout << kernel_result[row * N + col] << ' ';
-    //   }
-    //   cout << endl;
-    // }
-    
+    kernel(a, b, kernel_result, N);
+
     cout << "result: " << verify(serial_result, kernel_result, N) << endl; 
 
     delete[] a;
     delete[] b;
-  }
-  return 0;
+  } 
 }
