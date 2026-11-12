@@ -3,6 +3,7 @@
 #include <vector>
 
 #include "./benchmark_harness/Launchers.cuh"
+#include "./benchmark_harness/BenchmarkResult.cuh"
 
 using namespace std;
 
@@ -36,7 +37,7 @@ __global__ void MatmulKernel_d(float *Md, float *Nd, float *Pd, unsigned long wi
   Pd[thread] = sum;
 }
 
-void MatmulKernel(const Matrix<float> &M, const Matrix<float> &N, Matrix<float> &P, unsigned long Width) {
+Timing MatmulKernel(const Matrix<float> &M, const Matrix<float> &N, Matrix<float> &P, unsigned long Width) {
   int size = Width * Width * sizeof(float); // TODO: sizeof should be different. depends on type of matrix
   float *Md, *Nd, *Pd;
 
@@ -69,8 +70,6 @@ void MatmulKernel(const Matrix<float> &M, const Matrix<float> &N, Matrix<float> 
   float ms = 0.0f;
   cudaEventElapsedTime(&ms, start, stop);
 
-  std::cout << "Kernel Runtime: " << ms << "ms" << endl;
-
   string error = cudaGetErrorString(cudaGetLastError());
   if (error != "no error") {
     cout << error << endl;
@@ -83,9 +82,11 @@ void MatmulKernel(const Matrix<float> &M, const Matrix<float> &N, Matrix<float> 
   cudaFree(Md);
   cudaFree(Nd);
   cudaFree(Pd);
+
+  return Timing{ms};
 }
 
-void serialMatmul(const Matrix<float> &M, const Matrix<float> &N, Matrix<float> &P, unsigned long n) {
+Timing serialMatmul(const Matrix<float> &M, const Matrix<float> &N, Matrix<float> &P, unsigned long n) {
   auto start = chrono::steady_clock::now();
   for (size_t i = 0; i < n; i++) {
     for (size_t j = 0; j < n; j++) {
@@ -98,10 +99,16 @@ void serialMatmul(const Matrix<float> &M, const Matrix<float> &N, Matrix<float> 
   }
   auto end = chrono::steady_clock::now();
   chrono::duration<double, std::milli> elapsed = end - start;
-  cout << "serialMatmul Runtime: " << elapsed.count() << "ms" << endl;
+  return Timing{static_cast<float>(elapsed.count())};
 }
 
-void profile(Launcher serial, Launcher kernel, vector<int> sizes) {
+vector<BenchmarkResult> profile(
+    Launcher serial,
+    Launcher kernel,
+    const vector<int>& sizes
+) {
+  vector<BenchmarkResult> results;
+
   for (int N : sizes) {
     const int elements = N * N;
 
@@ -119,21 +126,36 @@ void profile(Launcher serial, Launcher kernel, vector<int> sizes) {
     // SERIAL RESULT
     Matrix<float> serial_result;
     serial_result.data.resize(elements);
-    serial(a, b, serial_result, N);
+    Timing serial_timing = serial(a, b, serial_result, N);
 
     // KERNEL RESULT
     Matrix<float> kernel_result;
     kernel_result.data.resize(elements);
-    kernel(a, b, kernel_result, N);
+    Timing kernel_timing = kernel(a, b, kernel_result, N);
 
-    cout << "result: " << verify(serial_result, kernel_result, N) << endl; 
+    results.push_back({
+      static_cast<unsigned long>(N),
+      serial_timing,
+      kernel_timing,
+      verify(serial_result, kernel_result, N)
+    });
   } 
+
+  return results;
 }
 
 // ---- Host --------------------------------------------------------------
 int main() {
   std::vector<int> sizes = {4, 8, 16, 32};
-  profile(serialMatmul, MatmulKernel, sizes);
+  vector<BenchmarkResult> results = profile(serialMatmul, MatmulKernel, sizes);
+
+  for (const BenchmarkResult& result : results) {
+    cout << "N=" << result.size
+         << " serial=" << result.serial.milliseconds << "ms"
+         << " kernel=" << result.parallel.milliseconds << "ms"
+         << " correct=" << result.correct
+         << endl;
+  }
   // for (int N : sizes) {
   //   printf("N=%d\n", N);
   //   const int elements = N * N;
