@@ -1,1 +1,7 @@
 env/
+
+.venv/
+.venv-python311-backup/
+.python-version
+
+plots/
